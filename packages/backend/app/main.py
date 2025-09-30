@@ -1,0 +1,126 @@
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, Request, status
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
+from fastapi.responses import JSONResponse
+import time
+import uuid
+
+from app.core.config import settings
+from app.core.logging import setup_logging, logger
+from app.api.v1.api import api_router
+
+setup_logging()
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    logger.info(f"Starting {settings.APP_NAME} v{settings.APP_VERSION}")
+    logger.info(f"Environment: {settings.ENVIRONMENT}")
+    yield
+    logger.info(f"Shutting down {settings.APP_NAME}")
+
+
+app = FastAPI(
+    title=settings.APP_NAME,
+    version=settings.APP_VERSION,
+    description="AI-powered platform to preserve life stories for future generations",
+    docs_url=f"{settings.API_V1_PREFIX}/docs",
+    redoc_url=f"{settings.API_V1_PREFIX}/redoc",
+    openapi_url=f"{settings.API_V1_PREFIX}/openapi.json",
+    lifespan=lifespan,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.CORS_ORIGINS,
+    allow_credentials=settings.CORS_CREDENTIALS,
+    allow_methods=settings.CORS_METHODS,
+    allow_headers=settings.CORS_HEADERS,
+)
+
+app.add_middleware(GZipMiddleware, minimum_size=1000)
+
+
+@app.middleware("http")
+async def add_request_id_middleware(request: Request, call_next):
+    request_id = str(uuid.uuid4())
+    request.state.request_id = request_id
+
+    start_time = time.time()
+    response = await call_next(request)
+    process_time = time.time() - start_time
+
+    response.headers["X-Request-ID"] = request_id
+    response.headers["X-Process-Time"] = str(process_time)
+
+    logger.info(
+        f"Request completed",
+        extra={
+            "request_id": request_id,
+            "method": request.method,
+            "path": request.url.path,
+            "status_code": response.status_code,
+            "process_time": process_time,
+        },
+    )
+
+    return response
+
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    request_id = getattr(request.state, "request_id", "unknown")
+    logger.error(
+        f"Unhandled exception: {str(exc)}",
+        extra={"request_id": request_id, "path": request.url.path},
+        exc_info=True,
+    )
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content={
+            "detail": "Internal server error",
+            "request_id": request_id,
+        },
+    )
+
+
+@app.get("/health", tags=["health"])
+async def health_check():
+    return {
+        "status": "healthy",
+        "app_name": settings.APP_NAME,
+        "version": settings.APP_VERSION,
+        "environment": settings.ENVIRONMENT,
+    }
+
+
+@app.get("/health/ready", tags=["health"])
+async def readiness_check():
+    return {
+        "status": "ready",
+        "checks": {
+            "database": "ok",
+            "redis": "ok",
+        },
+    }
+
+
+@app.get("/health/live", tags=["health"])
+async def liveness_check():
+    return {"status": "alive"}
+
+
+app.include_router(api_router, prefix=settings.API_V1_PREFIX)
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(
+        "app.main:app",
+        host=settings.HOST,
+        port=settings.PORT,
+        reload=settings.RELOAD,
+        log_config=None,
+    )
