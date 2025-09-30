@@ -1,10 +1,13 @@
-from typing import List
+"""Application configuration settings."""
+from typing import List, Union
 
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    """Application settings loaded from environment variables."""
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
@@ -36,7 +39,8 @@ class Settings(BaseSettings):
 
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
-    def parse_cors_origins(cls, v):
+    def parse_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
+        """Parse CORS origins from comma-separated string or list."""
         if isinstance(v, str):
             return [origin.strip() for origin in v.split(",")]
         return v
@@ -70,7 +74,8 @@ class Settings(BaseSettings):
 
     @field_validator("ALLOWED_AUDIO_FORMATS", mode="before")
     @classmethod
-    def parse_audio_formats(cls, v):
+    def parse_audio_formats(cls, v: Union[str, List[str]]) -> List[str]:
+        """Parse audio formats from comma-separated string or list."""
         if isinstance(v, str):
             return [fmt.strip() for fmt in v.split(",")]
         return v
@@ -83,10 +88,12 @@ class Settings(BaseSettings):
 
     @property
     def is_production(self) -> bool:
+        """Check if running in production environment."""
         return self.ENVIRONMENT == "production"
 
     @property
     def is_development(self) -> bool:
+        """Check if running in development environment."""
         return self.ENVIRONMENT == "development"
 
 

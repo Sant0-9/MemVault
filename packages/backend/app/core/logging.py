@@ -1,3 +1,4 @@
+"""Logging configuration and formatters."""
 import json
 import logging
 import sys
@@ -8,6 +9,8 @@ from app.core.config import settings
 
 
 class JSONFormatter(logging.Formatter):
+    """JSON formatter for structured logging."""
+
     def format(self, record: logging.LogRecord) -> str:
         log_data: Dict[str, Any] = {
             "timestamp": datetime.utcnow().isoformat(),
@@ -38,6 +41,8 @@ class JSONFormatter(logging.Formatter):
 
 
 class ColoredFormatter(logging.Formatter):
+    """Colored formatter for console output."""
+
     COLORS = {
         "DEBUG": "\033[36m",
         "INFO": "\033[32m",
@@ -48,17 +53,19 @@ class ColoredFormatter(logging.Formatter):
     RESET = "\033[0m"
 
     def format(self, record: logging.LogRecord) -> str:
+        """Format log record with colors."""
         color = self.COLORS.get(record.levelname, self.RESET)
         record.levelname = f"{color}{record.levelname}{self.RESET}"
         return super().format(record)
 
 
-def setup_logging():
-    logger = logging.getLogger()
-    logger.setLevel(getattr(logging, settings.LOG_LEVEL.upper()))
+def setup_logging() -> None:
+    """Configure application logging."""
+    root_logger = logging.getLogger()
+    root_logger.setLevel(getattr(logging, settings.LOG_LEVEL.upper()))
 
-    for handler in logger.handlers[:]:
-        logger.removeHandler(handler)
+    for handler in root_logger.handlers[:]:
+        root_logger.removeHandler(handler)
 
     handler = logging.StreamHandler(sys.stdout)
 
@@ -70,7 +77,7 @@ def setup_logging():
         )
 
     handler.setFormatter(formatter)
-    logger.addHandler(handler)
+    root_logger.addHandler(handler)
 
     logging.getLogger("uvicorn.access").disabled = True
 

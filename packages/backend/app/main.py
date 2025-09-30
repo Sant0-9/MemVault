@@ -1,3 +1,4 @@
+"""Main FastAPI application module."""
 import time
 import uuid
 from contextlib import asynccontextmanager
@@ -15,11 +16,12 @@ setup_logging()
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
-    logger.info(f"Starting {settings.APP_NAME} v{settings.APP_VERSION}")
-    logger.info(f"Environment: {settings.ENVIRONMENT}")
+async def lifespan(application: FastAPI):
+    """Manage application lifespan events."""
+    logger.info("Starting %s v%s", settings.APP_NAME, settings.APP_VERSION)
+    logger.info("Environment: %s", settings.ENVIRONMENT)
     yield
-    logger.info(f"Shutting down {settings.APP_NAME}")
+    logger.info("Shutting down %s", settings.APP_NAME)
 
 
 app = FastAPI(
@@ -45,6 +47,7 @@ app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 @app.middleware("http")
 async def add_request_id_middleware(request: Request, call_next):
+    """Add request ID and timing to all requests."""
     request_id = str(uuid.uuid4())
     request.state.request_id = request_id
 
@@ -56,7 +59,7 @@ async def add_request_id_middleware(request: Request, call_next):
     response.headers["X-Process-Time"] = str(process_time)
 
     logger.info(
-        f"Request completed",
+        "Request completed",
         extra={
             "request_id": request_id,
             "method": request.method,
@@ -71,9 +74,11 @@ async def add_request_id_middleware(request: Request, call_next):
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
+    """Handle all unhandled exceptions."""
     request_id = getattr(request.state, "request_id", "unknown")
     logger.error(
-        f"Unhandled exception: {str(exc)}",
+        "Unhandled exception: %s",
+        str(exc),
         extra={"request_id": request_id, "path": request.url.path},
         exc_info=True,
     )
@@ -88,6 +93,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 @app.get("/health", tags=["health"])
 async def health_check():
+    """Basic health check endpoint."""
     return {
         "status": "healthy",
         "app_name": settings.APP_NAME,
@@ -98,6 +104,7 @@ async def health_check():
 
 @app.get("/health/ready", tags=["health"])
 async def readiness_check():
+    """Readiness check for external dependencies."""
     return {
         "status": "ready",
         "checks": {
@@ -109,6 +116,7 @@ async def readiness_check():
 
 @app.get("/health/live", tags=["health"])
 async def liveness_check():
+    """Liveness check endpoint."""
     return {"status": "alive"}
 
 
