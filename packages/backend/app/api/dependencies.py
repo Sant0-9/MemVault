@@ -1,4 +1,5 @@
 """FastAPI dependencies for database, authentication, and pagination."""
+
 from typing import Dict, Generator, Optional, Union
 
 from fastapi import Depends, HTTPException, status

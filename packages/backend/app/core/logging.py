@@ -1,4 +1,5 @@
 """Logging configuration and formatters."""
+
 import json
 import logging
 import sys

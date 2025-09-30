@@ -1,4 +1,5 @@
 """Application configuration settings."""
+
 from typing import List, Union
 
 from pydantic import field_validator
