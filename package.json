@@ -3,9 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "description": "AI-powered platform to preserve life stories for future generations",
-  "workspaces": [
-    "packages/*"
-  ],
   "scripts": {
     "dev": "pnpm --parallel -r dev",
     "build": "pnpm -r build",
