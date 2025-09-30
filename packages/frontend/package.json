@@ -46,6 +46,7 @@
     "autoprefixer": "^10.4.17",
     "postcss": "^8.4.33",
     "vitest": "^1.2.1",
-    "@vitejs/plugin-react": "^4.2.1"
+    "@vitejs/plugin-react": "^4.2.1",
+    "jsdom": "^24.0.0"
   }
 }
