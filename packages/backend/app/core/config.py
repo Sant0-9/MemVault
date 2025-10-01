@@ -98,4 +98,4 @@ class Settings(BaseSettings):
         return self.ENVIRONMENT == "development"
 
 
-settings = Settings()
+settings = Settings()  # type: ignore[call-arg]

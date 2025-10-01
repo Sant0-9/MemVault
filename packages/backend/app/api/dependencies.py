@@ -12,6 +12,7 @@ security = HTTPBearer()
 
 async def get_db() -> Generator:
     """Get database session dependency (placeholder)."""
+    yield  # Placeholder for database session
 
 
 async def get_current_user(

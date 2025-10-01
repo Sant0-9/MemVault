@@ -3,8 +3,8 @@
 from datetime import datetime, timedelta
 from typing import Any, Optional, Union
 
-from jose import jwt
-from passlib.context import CryptContext
+from jose import jwt  # type: ignore[import-untyped]
+from passlib.context import CryptContext  # type: ignore[import-untyped]
 
 from app.core.config import settings
 
@@ -23,7 +23,7 @@ def create_access_token(
         )
 
     to_encode = {"exp": expire, "sub": str(subject), "type": "access"}
-    encoded_jwt = jwt.encode(
+    encoded_jwt: str = jwt.encode(
         to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM
     )
     return encoded_jwt
@@ -39,7 +39,7 @@ def create_refresh_token(
         expire = datetime.utcnow() + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
 
     to_encode = {"exp": expire, "sub": str(subject), "type": "refresh"}
-    encoded_jwt = jwt.encode(
+    encoded_jwt: str = jwt.encode(
         to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM
     )
     return encoded_jwt
@@ -58,9 +58,11 @@ def verify_token(token: str) -> Optional[str]:
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify password against hashed password."""
-    return pwd_context.verify(plain_password, hashed_password)
+    result: bool = pwd_context.verify(plain_password, hashed_password)
+    return result
 
 
 def get_password_hash(password: str) -> str:
     """Hash password using bcrypt."""
-    return pwd_context.hash(password)
+    hashed: str = pwd_context.hash(password)
+    return hashed

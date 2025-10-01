@@ -2,7 +2,9 @@
 
 import time
 import uuid
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
+from typing import Any
 
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -17,7 +19,9 @@ setup_logging()
 
 
 @asynccontextmanager
-async def lifespan(application: FastAPI):  # pylint: disable=unused-argument
+async def lifespan(
+    application: FastAPI,
+) -> AsyncGenerator[None, None]:  # pylint: disable=unused-argument
     """Manage application lifespan events."""
     logger.info("Starting %s v%s", settings.APP_NAME, settings.APP_VERSION)
     logger.info("Environment: %s", settings.ENVIRONMENT)
@@ -47,7 +51,7 @@ app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 
 @app.middleware("http")
-async def add_request_id_middleware(request: Request, call_next):
+async def add_request_id_middleware(request: Request, call_next: Any) -> Any:
     """Add request ID and timing to all requests."""
     request_id = str(uuid.uuid4())
     request.state.request_id = request_id
@@ -74,7 +78,7 @@ async def add_request_id_middleware(request: Request, call_next):
 
 
 @app.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception):
+async def global_exception_handler(request: Request, exc: Exception) -> JSONResponse:
     """Handle all unhandled exceptions."""
     request_id = getattr(request.state, "request_id", "unknown")
     logger.error(
@@ -93,7 +97,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 
 @app.get("/health", tags=["health"])
-async def health_check():
+async def health_check() -> dict[str, Any]:
     """Basic health check endpoint."""
     return {
         "status": "healthy",
@@ -104,7 +108,7 @@ async def health_check():
 
 
 @app.get("/health/ready", tags=["health"])
-async def readiness_check():
+async def readiness_check() -> dict[str, Any]:
     """Readiness check for external dependencies."""
     return {
         "status": "ready",
@@ -116,7 +120,7 @@ async def readiness_check():
 
 
 @app.get("/health/live", tags=["health"])
-async def liveness_check():
+async def liveness_check() -> dict[str, str]:
     """Liveness check endpoint."""
     return {"status": "alive"}
 

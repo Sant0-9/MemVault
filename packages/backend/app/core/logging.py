@@ -70,6 +70,7 @@ def setup_logging() -> None:
 
     handler = logging.StreamHandler(sys.stdout)
 
+    formatter: logging.Formatter
     if settings.LOG_FORMAT == "json":
         formatter = JSONFormatter()
     else:
