@@ -8,10 +8,14 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
-
 from app.core.config import settings
 from app.db.base import Base
-from app.db.models import Elder, FamilyMember, Memory, User  # noqa: F401 - Import models for metadata
+from app.db.models import (  # noqa: F401 - Import models for metadata
+    Elder,
+    FamilyMember,
+    Memory,
+    User,
+)
 
 config = context.config
 

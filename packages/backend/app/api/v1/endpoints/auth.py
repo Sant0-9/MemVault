@@ -15,12 +15,7 @@ from app.core.security import (
     verify_token,
 )
 from app.db.models import User
-from app.schemas.auth_schema import (
-    Token,
-    UserLogin,
-    UserRegister,
-    UserResponse,
-)
+from app.schemas.auth_schema import Token, UserLogin, UserRegister, UserResponse
 
 router = APIRouter()
 
