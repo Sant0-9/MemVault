@@ -20,8 +20,8 @@ setup_logging()
 
 @asynccontextmanager
 async def lifespan(
-    application: FastAPI,
-) -> AsyncGenerator[None, None]:  # pylint: disable=unused-argument
+    _application: FastAPI,
+) -> AsyncGenerator[None, None]:
     """Manage application lifespan events."""
     logger.info("Starting %s v%s", settings.APP_NAME, settings.APP_VERSION)
     logger.info("Environment: %s", settings.ENVIRONMENT)
