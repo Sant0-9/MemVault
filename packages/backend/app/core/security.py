@@ -51,7 +51,8 @@ def verify_token(token: str) -> Optional[str]:
         payload = jwt.decode(
             token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
         )
-        return payload.get("sub")
+        sub = payload.get("sub")
+        return str(sub) if sub is not None else None
     except jwt.JWTError:
         return None
 
