@@ -11,7 +11,7 @@ from alembic import context
 
 from app.core.config import settings
 from app.db.base import Base
-from app.db.models import User  # noqa: F401 - Import models for metadata
+from app.db.models import Elder, FamilyMember, Memory, User  # noqa: F401 - Import models for metadata
 
 config = context.config
 
