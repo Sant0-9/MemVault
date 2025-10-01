@@ -1,5 +1,6 @@
 """FastAPI dependencies for database, authentication, and pagination."""
 
+from collections.abc import AsyncGenerator
 from typing import Dict, Optional, Union
 
 from fastapi import Depends, HTTPException, status
@@ -12,7 +13,7 @@ from app.db.session import get_db as get_database_session
 security = HTTPBearer()
 
 
-async def get_db() -> AsyncSession:
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
     """Get database session dependency."""
     async for session in get_database_session():
         yield session

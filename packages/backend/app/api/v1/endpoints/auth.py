@@ -25,7 +25,9 @@ from app.schemas.auth_schema import (
 router = APIRouter()
 
 
-@router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED
+)
 async def register(user_data: UserRegister, db: AsyncSession = Depends(get_db)) -> Any:
     """Register a new user."""
     result = await db.execute(select(User).where(User.email == user_data.email))

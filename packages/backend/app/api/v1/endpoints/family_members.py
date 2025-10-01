@@ -19,12 +19,16 @@ from app.schemas.family_member_schema import (
 router = APIRouter()
 
 
-@router.post("/", response_model=FamilyMemberResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/", response_model=FamilyMemberResponse, status_code=status.HTTP_201_CREATED
+)
 async def create_family_member(
     family_member_data: FamilyMemberCreate, db: AsyncSession = Depends(get_db)
 ) -> Any:
     """Create a new family member relationship."""
-    user_result = await db.execute(select(User).where(User.id == family_member_data.user_id))
+    user_result = await db.execute(
+        select(User).where(User.id == family_member_data.user_id)
+    )
     user = user_result.scalar_one_or_none()
 
     if not user:
@@ -74,13 +78,17 @@ async def list_family_members(
     total_result = await db.execute(count_query)
     total = total_result.scalar_one()
 
-    query = query.order_by(FamilyMember.created_at.desc()).offset((page - 1) * size).limit(size)
+    query = (
+        query.order_by(FamilyMember.created_at.desc())
+        .offset((page - 1) * size)
+        .limit(size)
+    )
 
     result = await db.execute(query)
-    family_members = result.scalars().all()
+    family_members = list(result.scalars().all())
 
     return FamilyMemberList(
-        items=family_members,
+        items=family_members,  # type: ignore[arg-type]
         total=total,
         page=page,
         size=size,

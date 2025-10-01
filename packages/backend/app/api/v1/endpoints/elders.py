@@ -15,7 +15,9 @@ router = APIRouter()
 
 
 @router.post("/", response_model=ElderResponse, status_code=status.HTTP_201_CREATED)
-async def create_elder(elder_data: ElderCreate, db: AsyncSession = Depends(get_db)) -> Any:
+async def create_elder(
+    elder_data: ElderCreate, db: AsyncSession = Depends(get_db)
+) -> Any:
     """Create a new elder profile."""
     elder = Elder(**elder_data.model_dump())
     db.add(elder)
@@ -52,13 +54,15 @@ async def list_elders(
     total_result = await db.execute(count_query)
     total = total_result.scalar_one()
 
-    query = query.order_by(Elder.created_at.desc()).offset((page - 1) * size).limit(size)
+    query = (
+        query.order_by(Elder.created_at.desc()).offset((page - 1) * size).limit(size)
+    )
 
     result = await db.execute(query)
-    elders = result.scalars().all()
+    elders = list(result.scalars().all())
 
     return ElderList(
-        items=elders,
+        items=elders,  # type: ignore[arg-type]
         total=total,
         page=page,
         size=size,

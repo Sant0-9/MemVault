@@ -17,7 +17,9 @@ class Memory(Base):
     __tablename__ = "memories"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    elder_id: Mapped[int] = mapped_column(Integer, ForeignKey("elders.id"), nullable=False, index=True)
+    elder_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("elders.id"), nullable=False, index=True
+    )
 
     # Content
     title: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
@@ -32,14 +34,18 @@ class Memory(Base):
     waveform_data: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
 
     # Classification
-    category: Mapped[Optional[str]] = mapped_column(String(50), nullable=True, index=True)
+    category: Mapped[Optional[str]] = mapped_column(
+        String(50), nullable=True, index=True
+    )
     subcategory: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     era: Mapped[Optional[str]] = mapped_column(String(50), nullable=True, index=True)
     decade: Mapped[Optional[str]] = mapped_column(String(10), nullable=True)
 
     # Context
     location: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-    date_of_event: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    date_of_event: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     people_mentioned: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
 
     # AI Analysis
@@ -63,18 +69,27 @@ class Memory(Base):
     content_warnings: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
 
     # Quality
-    transcription_confidence: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    transcription_confidence: Mapped[Optional[float]] = mapped_column(
+        Float, nullable=True
+    )
     audio_quality_score: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
 
     # Timestamps
-    recorded_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    recorded_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False, index=True
     )
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
     )
-    deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    deleted_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
 
     # Full-text search
     search_vector: Mapped[Optional[str]] = mapped_column(TSVECTOR, nullable=True)

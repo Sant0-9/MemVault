@@ -9,16 +9,25 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies import get_db
 from app.db.models import Elder, Memory
-from app.schemas.memory_schema import MemoryCreate, MemoryList, MemoryResponse, MemoryUpdate
+from app.schemas.memory_schema import (
+    MemoryCreate,
+    MemoryList,
+    MemoryResponse,
+    MemoryUpdate,
+)
 
 router = APIRouter()
 
 
 @router.post("/", response_model=MemoryResponse, status_code=status.HTTP_201_CREATED)
-async def create_memory(memory_data: MemoryCreate, db: AsyncSession = Depends(get_db)) -> Any:
+async def create_memory(
+    memory_data: MemoryCreate, db: AsyncSession = Depends(get_db)
+) -> Any:
     """Create a new memory."""
     result = await db.execute(
-        select(Elder).where(Elder.id == memory_data.elder_id, Elder.deleted_at.is_(None))
+        select(Elder).where(
+            Elder.id == memory_data.elder_id, Elder.deleted_at.is_(None)
+        )
     )
     elder = result.scalar_one_or_none()
 
@@ -71,13 +80,15 @@ async def list_memories(
     total_result = await db.execute(count_query)
     total = total_result.scalar_one()
 
-    query = query.order_by(Memory.created_at.desc()).offset((page - 1) * size).limit(size)
+    query = (
+        query.order_by(Memory.created_at.desc()).offset((page - 1) * size).limit(size)
+    )
 
     result = await db.execute(query)
-    memories = result.scalars().all()
+    memories = list(result.scalars().all())
 
     return MemoryList(
-        items=memories,
+        items=memories,  # type: ignore[arg-type]
         total=total,
         page=page,
         size=size,
