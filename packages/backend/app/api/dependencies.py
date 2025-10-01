@@ -1,19 +1,21 @@
 """FastAPI dependencies for database, authentication, and pagination."""
 
-from collections.abc import AsyncGenerator
-from typing import Any, Dict, Optional, Union
+from typing import Dict, Optional, Union
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.security import verify_token
+from app.db.session import get_db as get_database_session
 
 security = HTTPBearer()
 
 
-async def get_db() -> AsyncGenerator[Any, None]:
-    """Get database session dependency (placeholder)."""
-    yield  # Placeholder for database session
+async def get_db() -> AsyncSession:
+    """Get database session dependency."""
+    async for session in get_database_session():
+        yield session
 
 
 async def get_current_user(

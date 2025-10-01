@@ -1,9 +1,16 @@
 """Application configuration settings."""
 
-from typing import List, Union
+from typing import Annotated, List, Union
 
-from pydantic import field_validator
+from pydantic import BeforeValidator, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+def parse_string_list(v: Union[str, List[str]]) -> List[str]:
+    """Parse a comma-separated string into a list."""
+    if isinstance(v, str):
+        return [item.strip() for item in v.split(",")]
+    return v
 
 
 class Settings(BaseSettings):
@@ -13,6 +20,7 @@ class Settings(BaseSettings):
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=True,
+        json_schema_extra={"ignore": True},
     )
 
     APP_NAME: str = "MemoryVault"
@@ -33,18 +41,25 @@ class Settings(BaseSettings):
 
     REDIS_URL: str = "redis://localhost:6379/0"
 
-    CORS_ORIGINS: List[str] = ["http://localhost:3000"]
+    CORS_ORIGINS: str = "http://localhost:3000"
     CORS_CREDENTIALS: bool = True
-    CORS_METHODS: List[str] = ["*"]
-    CORS_HEADERS: List[str] = ["*"]
+    CORS_METHODS: str = "*"
+    CORS_HEADERS: str = "*"
 
-    @field_validator("CORS_ORIGINS", mode="before")
-    @classmethod
-    def parse_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
-        """Parse CORS origins from comma-separated string or list."""
-        if isinstance(v, str):
-            return [origin.strip() for origin in v.split(",")]
-        return v
+    @property
+    def cors_origins_list(self) -> List[str]:
+        """Parse CORS origins as list."""
+        return [origin.strip() for origin in self.CORS_ORIGINS.split(",")]
+
+    @property
+    def cors_methods_list(self) -> List[str]:
+        """Parse CORS methods as list."""
+        return [method.strip() for method in self.CORS_METHODS.split(",")]
+
+    @property
+    def cors_headers_list(self) -> List[str]:
+        """Parse CORS headers as list."""
+        return [header.strip() for header in self.CORS_HEADERS.split(",")]
 
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
@@ -71,15 +86,12 @@ class Settings(BaseSettings):
 
     MAX_UPLOAD_SIZE: int = 524288000
     TEMP_STORAGE_PATH: str = "/tmp/memvault"
-    ALLOWED_AUDIO_FORMATS: List[str] = ["mp3", "wav", "m4a", "ogg", "flac"]
+    ALLOWED_AUDIO_FORMATS: str = "mp3,wav,m4a,ogg,flac"
 
-    @field_validator("ALLOWED_AUDIO_FORMATS", mode="before")
-    @classmethod
-    def parse_audio_formats(cls, v: Union[str, List[str]]) -> List[str]:
-        """Parse audio formats from comma-separated string or list."""
-        if isinstance(v, str):
-            return [fmt.strip() for fmt in v.split(",")]
-        return v
+    @property
+    def allowed_audio_formats_list(self) -> List[str]:
+        """Parse allowed audio formats as list."""
+        return [fmt.strip() for fmt in self.ALLOWED_AUDIO_FORMATS.split(",")]
 
     LOG_LEVEL: str = "INFO"
     LOG_FORMAT: str = "json"
