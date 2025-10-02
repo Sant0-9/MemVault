@@ -48,10 +48,19 @@ export default function RegisterPage() {
       setAuth(registerResponse.data, access_token)
       router.push('/dashboard')
     } catch (err: any) {
-      const errorMessage =
-        typeof err.response?.data?.detail === 'string'
-          ? err.response.data.detail
-          : err.response?.data?.detail?.[0]?.msg || 'Registration failed. Please try again.'
+      let errorMessage = 'Registration failed. Please try again.'
+
+      if (typeof err.response?.data?.detail === 'string') {
+        errorMessage = err.response.data.detail
+      } else if (Array.isArray(err.response?.data?.detail)) {
+        const firstError = err.response.data.detail[0]
+        if (firstError?.loc?.includes('password') && firstError?.msg?.includes('at least')) {
+          errorMessage = 'Password must be at least 8 characters long'
+        } else {
+          errorMessage = firstError?.msg || errorMessage
+        }
+      }
+
       setError(errorMessage)
     } finally {
       setLoading(false)
