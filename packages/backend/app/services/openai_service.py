@@ -184,7 +184,9 @@ Respond in JSON format with these exact keys: category, tags, emotional_tone, ti
 
         import json
 
-        enrichment_data: dict[str, Any] = json.loads(response.choices[0].message.content or "{}")
+        enrichment_data: dict[str, Any] = json.loads(
+            response.choices[0].message.content or "{}"
+        )
 
         if existing_tags:
             enrichment_data["tags"] = list(
