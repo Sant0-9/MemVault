@@ -38,7 +38,11 @@ export default function LoginPage() {
       setAuth(userResponse.data, access_token)
       router.push('/dashboard')
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Login failed. Please try again.')
+      const errorMessage =
+        typeof err.response?.data?.detail === 'string'
+          ? err.response.data.detail
+          : err.response?.data?.detail?.[0]?.msg || 'Login failed. Please try again.'
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }
