@@ -13,6 +13,7 @@ from app.db.base import Base
 from app.db.models import (  # noqa: F401 - Import models for metadata
     Elder,
     FamilyMember,
+    InterviewSession,
     Memory,
     User,
 )
