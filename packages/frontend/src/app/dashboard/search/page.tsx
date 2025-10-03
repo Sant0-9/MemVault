@@ -173,7 +173,7 @@ export default function SearchPage() {
         </form>
 
         {showFilters && searchResults && (
-          <Card className="mb-6">
+          <Card className="mb-6 card-hover border-primary/20 bg-card/50 backdrop-blur-sm">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Filters</CardTitle>
@@ -291,7 +291,7 @@ export default function SearchPage() {
             </div>
 
             {searchResults.results.length === 0 ? (
-              <Card>
+              <Card className="border-primary/20 bg-card/50 backdrop-blur-sm">
                 <CardContent className="py-12 text-center">
                   <p className="text-muted-foreground">No memories found</p>
                 </CardContent>
@@ -300,7 +300,7 @@ export default function SearchPage() {
               <div className="space-y-4">
                 {searchResults.results.map((result) => (
                   <Link key={result.id} href={`/dashboard/memories/${result.id}`}>
-                    <Card className="hover:bg-accent transition-colors cursor-pointer">
+                    <Card className="card-hover border-primary/20 bg-card/50 backdrop-blur-sm cursor-pointer">
                       <CardHeader>
                         <div className="flex items-start justify-between gap-4">
                           <div className="flex-1">

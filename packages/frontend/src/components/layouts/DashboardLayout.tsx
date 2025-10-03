@@ -22,7 +22,7 @@ const maxWidthClasses = {
 
 export default function DashboardLayout({ children, maxWidth = '7xl' }: DashboardLayoutProps) {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen gradient-bg">
       <DashboardHeader />
       <main className={`container mx-auto px-4 py-8 ${maxWidthClasses[maxWidth]}`}>
         {children}

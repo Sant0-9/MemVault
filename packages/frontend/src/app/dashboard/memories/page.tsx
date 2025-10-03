@@ -81,7 +81,7 @@ export default function MemoriesPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen gradient-bg">
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -141,7 +141,7 @@ export default function MemoriesPage() {
               {memories.map((memory) => (
                 <Card
                   key={memory.id}
-                  className="p-6 hover:shadow-lg transition-shadow cursor-pointer"
+                  className="p-6 card-hover border-primary/20 bg-card/50 backdrop-blur-sm cursor-pointer"
                   onClick={() => router.push(`/dashboard/memories/${memory.id}`)}
                 >
                   <div className="space-y-3">

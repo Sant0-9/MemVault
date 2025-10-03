@@ -85,138 +85,153 @@ export default function DashboardPage() {
 
   return (
     <DashboardLayout>
-      <div>
+      <div className="relative">
+        <div className="mb-10 fade-in-up">
+          <h1 className="text-3xl font-semibold tracking-tight text-white mb-2">
+            Dashboard
+          </h1>
+          <p className="text-neutral-400 text-sm">
+            Overview of your family memories and stories
+          </p>
+        </div>
+
         {stats && (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <Card>
-              <CardHeader className="pb-3">
-                <CardDescription>Total Memories</CardDescription>
-                <CardTitle className="text-3xl">{stats.total_memories}</CardTitle>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12 fade-in-up" style={{ animationDelay: '0.1s' }}>
+            <Card className="stat-card">
+              <CardHeader className="pb-2 pt-5">
+                <CardDescription className="text-xs font-medium text-neutral-500 mb-1">Total Memories</CardDescription>
+                <CardTitle className="text-3xl font-semibold tracking-tight text-white number-shift">{stats.total_memories}</CardTitle>
               </CardHeader>
             </Card>
-            <Card>
-              <CardHeader className="pb-3">
-                <CardDescription>Hours Recorded</CardDescription>
-                <CardTitle className="text-3xl">{stats.total_duration_hours}h</CardTitle>
+            <Card className="stat-card">
+              <CardHeader className="pb-2 pt-5">
+                <CardDescription className="text-xs font-medium text-neutral-500 mb-1">Hours Recorded</CardDescription>
+                <CardTitle className="text-3xl font-semibold tracking-tight text-white number-shift">{stats.total_duration_hours}h</CardTitle>
               </CardHeader>
             </Card>
-            <Card>
-              <CardHeader className="pb-3">
-                <CardDescription>Family Members</CardDescription>
-                <CardTitle className="text-3xl">{stats.total_elders}</CardTitle>
+            <Card className="stat-card">
+              <CardHeader className="pb-2 pt-5">
+                <CardDescription className="text-xs font-medium text-neutral-500 mb-1">Family Members</CardDescription>
+                <CardTitle className="text-3xl font-semibold tracking-tight text-white number-shift">{stats.total_elders}</CardTitle>
               </CardHeader>
             </Card>
-            <Card>
-              <CardHeader className="pb-3">
-                <CardDescription>This Month</CardDescription>
-                <CardTitle className="text-3xl">+{stats.memories_this_month}</CardTitle>
+            <Card className="stat-card">
+              <CardHeader className="pb-2 pt-5">
+                <CardDescription className="text-xs font-medium text-neutral-500 mb-1">This Month</CardDescription>
+                <CardTitle className="text-3xl font-semibold tracking-tight text-white number-shift">+{stats.memories_this_month}</CardTitle>
               </CardHeader>
             </Card>
           </div>
         )}
 
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold">Quick Actions</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Button asChild variant="outline" size="lg" className="h-auto py-4">
-              <Link href="/dashboard/elders/new">
-                <div className="text-center">
-                  <div className="text-2xl mb-2">👴</div>
-                  <div className="font-semibold">Add Elder</div>
+        <div className="mb-12 fade-in-up" style={{ animationDelay: '0.2s' }}>
+          <h2 className="text-xl font-semibold tracking-tight text-white mb-4">Quick Actions</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+            <Link href="/dashboard/elders/new">
+              <Card className="modern-card p-4 cursor-pointer group">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-purple-500/20 transition-colors">
+                    <svg className="w-5 h-5 text-neutral-400 group-hover:text-purple-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-medium text-sm text-white">Add Elder</div>
+                    <div className="text-xs text-neutral-500">Create profile</div>
+                  </div>
                 </div>
-              </Link>
-            </Button>
-            <Button asChild variant="outline" size="lg" className="h-auto py-4">
-              <Link href="/dashboard/memories">
-                <div className="text-center">
-                  <div className="text-2xl mb-2">🎵</div>
-                  <div className="font-semibold">Browse Memories</div>
+              </Card>
+            </Link>
+            <Link href="/dashboard/memories">
+              <Card className="modern-card p-4 cursor-pointer group">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-purple-500/20 transition-colors">
+                    <svg className="w-5 h-5 text-neutral-400 group-hover:text-purple-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-medium text-sm text-white">Browse Memories</div>
+                    <div className="text-xs text-neutral-500">View collection</div>
+                  </div>
                 </div>
-              </Link>
-            </Button>
-            <Button asChild variant="outline" size="lg" className="h-auto py-4">
-              <Link href="/dashboard/search">
-                <div className="text-center">
-                  <div className="text-2xl mb-2">🔍</div>
-                  <div className="font-semibold">Search Memories</div>
+              </Card>
+            </Link>
+            <Link href="/dashboard/search">
+              <Card className="modern-card p-4 cursor-pointer group">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-purple-500/20 transition-colors">
+                    <svg className="w-5 h-5 text-neutral-400 group-hover:text-purple-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-medium text-sm text-white">Search</div>
+                    <div className="text-xs text-neutral-500">Find memories</div>
+                  </div>
                 </div>
-              </Link>
-            </Button>
-            <Button asChild variant="outline" size="lg" className="h-auto py-4">
-              <Link href={elders[0] ? `/dashboard/elders/${elders[0].id}/interview` : '#'}>
-                <div className="text-center">
-                  <div className="text-2xl mb-2">🎤</div>
-                  <div className="font-semibold">Start Interview</div>
+              </Card>
+            </Link>
+            <Link href={elders[0] ? `/dashboard/elders/${elders[0].id}/interview` : '#'}>
+              <Card className="modern-card p-4 cursor-pointer group">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center group-hover:bg-purple-500/30 transition-colors">
+                    <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-medium text-sm text-white">Start Interview</div>
+                    <div className="text-xs text-neutral-500">Record now</div>
+                  </div>
                 </div>
-              </Link>
-            </Button>
+              </Card>
+            </Link>
           </div>
         </div>
 
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-2xl font-bold">Family Members</h2>
-            <p className="text-muted-foreground mt-1">
-              Manage and preserve memories of your loved ones
-            </p>
-          </div>
-          <Button asChild>
+        <div className="flex items-center justify-between mb-4 fade-in-up" style={{ animationDelay: '0.3s' }}>
+          <h2 className="text-xl font-semibold tracking-tight text-white">Family Members</h2>
+          <Button asChild size="sm" className="bg-white hover:bg-neutral-200 text-black">
             <Link href="/dashboard/elders/new">Add Elder</Link>
           </Button>
         </div>
 
         {loading ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">Loading...</p>
+            <p className="text-neutral-500 text-sm">Loading...</p>
           </div>
         ) : elders.length === 0 ? (
-          <Card>
-            <CardHeader>
-              <CardTitle>No family members yet</CardTitle>
-              <CardDescription>
-                Get started by adding your first family member to begin preserving their memories
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button asChild>
-                <Link href="/dashboard/elders/new">Add Your First Elder</Link>
-              </Button>
-            </CardContent>
+          <Card className="modern-card p-12 text-center fade-in-up" style={{ animationDelay: '0.4s' }}>
+            <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-white/5 flex items-center justify-center">
+              <svg className="w-8 h-8 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+            </div>
+            <h3 className="text-base font-medium text-white mb-2">No family members yet</h3>
+            <p className="text-sm text-neutral-400 mb-6 max-w-sm mx-auto">
+              Get started by adding your first family member to begin preserving their memories
+            </p>
+            <Button asChild className="bg-white hover:bg-neutral-200 text-black">
+              <Link href="/dashboard/elders/new">Add Your First Elder</Link>
+            </Button>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 fade-in-up" style={{ animationDelay: '0.4s' }}>
             {elders.map((elder) => (
-              <Card key={elder.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-2xl font-bold">
-                      {elder.name.charAt(0)}
-                    </div>
-                    <div>
-                      <CardTitle>{elder.name}</CardTitle>
-                      <CardDescription>{elder.relationship}</CardDescription>
-                    </div>
+              <Card key={elder.id} className="modern-card p-5 group">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-lg font-semibold text-neutral-300 group-hover:bg-purple-500/20 group-hover:text-purple-400 transition-colors">
+                    {elder.name.charAt(0)}
                   </div>
-                </CardHeader>
-                <CardContent>
-                  {elder.bio && (
-                    <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
-                      {elder.bio}
-                    </p>
-                  )}
-                  <div className="flex gap-2">
-                    <Button asChild variant="outline" className="flex-1">
-                      <Link href={`/dashboard/elders/${elder.id}`}>View</Link>
-                    </Button>
-                    <Button asChild className="flex-1">
-                      <Link href={`/dashboard/elders/${elder.id}/interview`}>
-                        Start Interview
-                      </Link>
-                    </Button>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-medium text-white truncate">{elder.name}</h3>
+                    <p className="text-sm text-neutral-400">{elder.relationship}</p>
                   </div>
-                </CardContent>
+                </div>
+                {elder.bio && (
+                  <p className="text-sm text-neutral-400 mb-4 line-clamp-2 leading-relaxed">
+                    {elder.bio}
+                  </p>
+                )}
+                <div className="flex gap-2">
+                  <Button asChild variant="outline" size="sm" className="flex-1 text-xs border-white/10 hover:bg-white/5">
+                    <Link href={`/dashboard/elders/${elder.id}`}>View</Link>
+                  </Button>
+                  <Button asChild size="sm" className="flex-1 bg-white hover:bg-neutral-200 text-black text-xs">
+                    <Link href={`/dashboard/elders/${elder.id}/interview`}>Interview</Link>
+                  </Button>
+                </div>
               </Card>
             ))}
           </div>

@@ -9,8 +9,8 @@ export default function TimelinePage() {
   const elderId = parseInt(params.id as string)
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
+    <div className="min-h-screen gradient-bg">
+      <header className="border-b border-primary/20 bg-card/50 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4">
           <Link
             href={`/dashboard/elders/${elderId}`}

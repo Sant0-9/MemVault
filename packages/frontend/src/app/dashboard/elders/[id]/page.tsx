@@ -63,7 +63,7 @@ export default function ElderDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen gradient-bg flex items-center justify-center">
         <p className="text-muted-foreground">Loading...</p>
       </div>
     )
@@ -71,15 +71,15 @@ export default function ElderDetailPage() {
 
   if (!elder) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen gradient-bg flex items-center justify-center">
         <p className="text-muted-foreground">Elder not found</p>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
+    <div className="min-h-screen gradient-bg">
+      <header className="border-b border-primary/20 bg-card/50 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4">
           <Link href="/dashboard" className="text-sm text-muted-foreground hover:text-foreground">
             ← Back to Dashboard
@@ -89,7 +89,7 @@ export default function ElderDetailPage() {
 
       <main className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="space-y-6">
-          <Card>
+          <Card className="card-hover border-primary/20 bg-card/50 backdrop-blur-sm">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
@@ -133,7 +133,7 @@ export default function ElderDetailPage() {
 
           <ExportMemories elderId={parseInt(elderId)} elderName={elder.name} />
 
-          <Card>
+          <Card className="card-hover border-primary/20 bg-card/50 backdrop-blur-sm">
             <CardHeader>
               <CardTitle>Memories ({memories.length})</CardTitle>
               <CardDescription>
@@ -157,7 +157,7 @@ export default function ElderDetailPage() {
                   {memories.map((memory) => (
                     <div
                       key={memory.id}
-                      className="border rounded-lg p-4 hover:bg-accent transition-colors"
+                      className="border border-primary/20 rounded-lg p-4 hover:bg-accent/50 transition-all hover:shadow-md"
                     >
                       <h3 className="font-medium">{memory.title}</h3>
                       {memory.category && (

@@ -78,7 +78,7 @@ export default function AnalyticsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen gradient-bg flex items-center justify-center">
         <p className="text-muted-foreground">Loading analytics...</p>
       </div>
     )
@@ -86,15 +86,15 @@ export default function AnalyticsPage() {
 
   if (!analytics) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen gradient-bg flex items-center justify-center">
         <p className="text-muted-foreground">No analytics data available</p>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
+    <div className="min-h-screen gradient-bg">
+      <header className="border-b border-primary/20 bg-card/50 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4">
           <Link
             href={`/dashboard/elders/${elderId}`}
@@ -116,7 +116,7 @@ export default function AnalyticsPage() {
         <div className="space-y-6">
           {/* Overview Stats */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card>
+            <Card className="card-hover border-primary/20 bg-card/50 backdrop-blur-sm">
               <CardHeader className="pb-3">
                 <CardDescription>Total Memories</CardDescription>
               </CardHeader>
@@ -125,7 +125,7 @@ export default function AnalyticsPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="card-hover border-primary/20 bg-card/50 backdrop-blur-sm">
               <CardHeader className="pb-3">
                 <CardDescription>Total Duration</CardDescription>
               </CardHeader>
@@ -136,7 +136,7 @@ export default function AnalyticsPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="card-hover border-primary/20 bg-card/50 backdrop-blur-sm">
               <CardHeader className="pb-3">
                 <CardDescription>With Audio</CardDescription>
               </CardHeader>
@@ -147,7 +147,7 @@ export default function AnalyticsPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="card-hover border-primary/20 bg-card/50 backdrop-blur-sm">
               <CardHeader className="pb-3">
                 <CardDescription>With Transcription</CardDescription>
               </CardHeader>
@@ -160,7 +160,7 @@ export default function AnalyticsPage() {
           </div>
 
           {/* Timeline Analysis */}
-          <Card>
+          <Card className="card-hover border-primary/20 bg-card/50 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Clock className="h-5 w-5" />
@@ -235,7 +235,7 @@ export default function AnalyticsPage() {
 
           {/* Content & Emotional Insights */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
+            <Card className="card-hover border-primary/20 bg-card/50 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <BarChart className="h-5 w-5" />
@@ -269,7 +269,7 @@ export default function AnalyticsPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="card-hover border-primary/20 bg-card/50 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Heart className="h-5 w-5" />
@@ -310,7 +310,7 @@ export default function AnalyticsPage() {
 
           {/* People & Locations */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
+            <Card className="card-hover border-primary/20 bg-card/50 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Users className="h-5 w-5" />
@@ -339,7 +339,7 @@ export default function AnalyticsPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="card-hover border-primary/20 bg-card/50 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MapPin className="h-5 w-5" />
@@ -370,7 +370,7 @@ export default function AnalyticsPage() {
           </div>
 
           {/* Quality Metrics */}
-          <Card>
+          <Card className="card-hover border-primary/20 bg-card/50 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <TrendingUp className="h-5 w-5" />

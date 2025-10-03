@@ -118,7 +118,7 @@ export default function InterviewPage() {
 
   if (initializing) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen gradient-bg flex items-center justify-center">
         <p className="text-muted-foreground">Initializing interview...</p>
       </div>
     )
@@ -126,7 +126,7 @@ export default function InterviewPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen gradient-bg flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-500 mb-4">Error: {error}</p>
           <Button onClick={() => router.push('/dashboard')}>Back to Dashboard</Button>
@@ -136,8 +136,8 @@ export default function InterviewPage() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-background">
-      <header className="border-b">
+    <div className="flex flex-col h-screen gradient-bg">
+      <header className="border-b border-primary/20 bg-card/50 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link
@@ -171,10 +171,10 @@ export default function InterviewPage() {
                 }`}
               >
                 <Card
-                  className={`max-w-[80%] p-4 ${
+                  className={`max-w-[80%] p-4 border-primary/20 ${
                     message.role === 'user'
                       ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted'
+                      : 'bg-card/50 backdrop-blur-sm'
                   }`}
                 >
                   <p className="text-sm whitespace-pre-wrap">{message.content}</p>
@@ -183,7 +183,7 @@ export default function InterviewPage() {
             ))}
             {loading && (
               <div className="flex justify-start">
-                <Card className="max-w-[80%] p-4 bg-muted">
+                <Card className="max-w-[80%] p-4 border-primary/20 bg-card/50 backdrop-blur-sm">
                   <p className="text-sm text-muted-foreground">Thinking...</p>
                 </Card>
               </div>
@@ -193,7 +193,7 @@ export default function InterviewPage() {
         </div>
       </div>
 
-      <div className="border-t bg-background">
+      <div className="border-t border-primary/20 bg-card/50 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4 max-w-3xl">
           <form onSubmit={handleSubmit} className="flex gap-4">
             <Input
