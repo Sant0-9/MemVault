@@ -59,7 +59,9 @@ async def _get_overview_stats(memories: list[Memory]) -> dict[str, Any]:
         "total_memories": total_memories,
         "total_duration_seconds": total_duration,
         "total_duration_formatted": _format_duration(total_duration),
-        "average_duration_seconds": total_duration // total_memories if total_memories > 0 else 0,
+        "average_duration_seconds": (
+            total_duration // total_memories if total_memories > 0 else 0
+        ),
         "memories_with_audio": sum(1 for m in memories if m.audio_url),
         "memories_with_transcription": sum(1 for m in memories if m.transcription),
     }
@@ -77,7 +79,9 @@ async def _get_timeline_analysis(memories: list[Memory]) -> dict[str, Any]:
         elif memory.date_of_event:
             decade = f"{(memory.date_of_event.year // 10) * 10}s"
             decades[decade] = decades.get(decade, 0) + 1
-            years[memory.date_of_event.year] = years.get(memory.date_of_event.year, 0) + 1
+            years[memory.date_of_event.year] = (
+                years.get(memory.date_of_event.year, 0) + 1
+            )
 
         if memory.era:
             eras[memory.era] = eras.get(memory.era, 0) + 1
@@ -88,7 +92,9 @@ async def _get_timeline_analysis(memories: list[Memory]) -> dict[str, Any]:
     return {
         "decades": [{"decade": k, "count": v} for k, v in sorted(decades.items())],
         "eras": [{"era": k, "count": v} for k, v in eras.items()],
-        "years_with_memories": [{"year": k, "count": v} for k, v in sorted(years.items())],
+        "years_with_memories": [
+            {"year": k, "count": v} for k, v in sorted(years.items())
+        ],
         "earliest_memory": earliest.isoformat() if earliest else None,
         "latest_memory": latest.isoformat() if latest else None,
         "span_years": (latest.year - earliest.year) if earliest and latest else 0,
@@ -126,7 +132,10 @@ async def _get_content_analysis(memories: list[Memory]) -> dict[str, Any]:
     top_tags = sorted(tags_count.items(), key=lambda x: x[1], reverse=True)[:10]
 
     return {
-        "categories": [{"category": k, "count": v} for k, v in sorted(categories.items(), key=lambda x: x[1], reverse=True)],
+        "categories": [
+            {"category": k, "count": v}
+            for k, v in sorted(categories.items(), key=lambda x: x[1], reverse=True)
+        ],
         "total_categories": len(categories),
         "locations_mentioned": list(locations),
         "total_locations": len(locations),
@@ -153,7 +162,9 @@ async def _get_emotional_insights(memories: list[Memory]) -> dict[str, Any]:
         for k, v in sorted(emotions.items(), key=lambda x: x[1], reverse=True)
     ]
 
-    dominant_emotion = max(emotions.items(), key=lambda x: x[1])[0] if emotions else None
+    dominant_emotion = (
+        max(emotions.items(), key=lambda x: x[1])[0] if emotions else None
+    )
 
     return {
         "emotion_distribution": emotion_distribution,
@@ -177,16 +188,24 @@ async def _get_engagement_metrics(memories: list[Memory]) -> dict[str, Any]:
         "total_plays": total_plays,
         "total_shares": total_shares,
         "average_plays_per_memory": total_plays // len(memories) if memories else 0,
-        "most_played_memory": {
-            "id": most_played.id,
-            "title": most_played.title,
-            "play_count": most_played.play_count,
-        } if most_played and most_played.play_count > 0 else None,
-        "most_shared_memory": {
-            "id": most_shared.id,
-            "title": most_shared.title,
-            "share_count": most_shared.share_count,
-        } if most_shared and most_shared.share_count > 0 else None,
+        "most_played_memory": (
+            {
+                "id": most_played.id,
+                "title": most_played.title,
+                "play_count": most_played.play_count,
+            }
+            if most_played and most_played.play_count > 0
+            else None
+        ),
+        "most_shared_memory": (
+            {
+                "id": most_shared.id,
+                "title": most_shared.title,
+                "share_count": most_shared.share_count,
+            }
+            if most_shared and most_shared.share_count > 0
+            else None
+        ),
     }
 
 
@@ -220,7 +239,8 @@ async def _get_quality_metrics(memories: list[Memory]) -> dict[str, Any]:
             1 for c in transcription_confidences if c < 0.5
         ),
         "memories_needing_review": sum(
-            1 for m in memories
+            1
+            for m in memories
             if m.transcription_confidence and m.transcription_confidence < 0.5
         ),
     }
@@ -243,13 +263,17 @@ async def get_recent_activity(
 
     cutoff_date = datetime.now() - timedelta(days=days)
 
-    query = select(Memory).where(
-        and_(
-            Memory.elder_id == elder_id,
-            Memory.created_at >= cutoff_date,
-            Memory.deleted_at.is_(None),
+    query = (
+        select(Memory)
+        .where(
+            and_(
+                Memory.elder_id == elder_id,
+                Memory.created_at >= cutoff_date,
+                Memory.deleted_at.is_(None),
+            )
         )
-    ).order_by(Memory.created_at.desc())
+        .order_by(Memory.created_at.desc())
+    )
 
     result = await db.execute(query)
     recent_memories = result.scalars().all()
@@ -259,12 +283,14 @@ async def get_recent_activity(
         day_key = memory.created_at.date().isoformat()
         if day_key not in memories_by_day:
             memories_by_day[day_key] = []
-        memories_by_day[day_key].append({
-            "id": memory.id,
-            "title": memory.title,
-            "category": memory.category,
-            "created_at": memory.created_at.isoformat(),
-        })
+        memories_by_day[day_key].append(
+            {
+                "id": memory.id,
+                "title": memory.title,
+                "category": memory.category,
+                "created_at": memory.created_at.isoformat(),
+            }
+        )
 
     return {
         "elder_id": elder_id,
@@ -286,7 +312,9 @@ async def get_global_analytics(
     elders_result = await db.execute(select(Elder).where(Elder.deleted_at.is_(None)))
     elders = elders_result.scalars().all()
 
-    memories_result = await db.execute(select(Memory).where(Memory.deleted_at.is_(None)))
+    memories_result = await db.execute(
+        select(Memory).where(Memory.deleted_at.is_(None))
+    )
     memories = memories_result.scalars().all()
 
     total_duration = sum(m.duration_seconds or 0 for m in memories)
@@ -317,7 +345,6 @@ def _format_duration(seconds: int) -> str:
 
     if hours > 0:
         return f"{hours}h {minutes}m"
-    elif minutes > 0:
+    if minutes > 0:
         return f"{minutes}m {secs}s"
-    else:
-        return f"{secs}s"
+    return f"{secs}s"

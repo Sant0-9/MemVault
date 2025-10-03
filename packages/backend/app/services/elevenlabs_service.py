@@ -231,9 +231,7 @@ class ElevenLabsService:
             quality_issues.append("At least 1 audio sample is required")
 
         if len(audio_files) < 3:
-            quality_issues.append(
-                "For best results, provide 3-5 diverse audio samples"
-            )
+            quality_issues.append("For best results, provide 3-5 diverse audio samples")
 
         return {
             "is_ready": len(quality_issues) == 0,

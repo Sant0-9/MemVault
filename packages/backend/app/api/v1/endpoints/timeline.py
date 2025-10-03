@@ -200,9 +200,7 @@ def _group_by_era(memories: list[Memory]) -> list[dict[str, Any]]:
             for era, memories_list in eras.items()
         ],
         key=lambda x: (
-            era_order.index(x["period"])
-            if x["period"] in era_order
-            else len(era_order)
+            era_order.index(x["period"]) if x["period"] in era_order else len(era_order)
         ),
     )
 

@@ -51,11 +51,11 @@ async def clone_voice(
             detail="At least one audio file is required",
         )
 
-    MAX_FILES = 10
-    if len(audio_files) > MAX_FILES:
+    max_files = 10
+    if len(audio_files) > max_files:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Maximum {MAX_FILES} audio files allowed",
+            detail=f"Maximum {max_files} audio files allowed",
         )
 
     try:
@@ -104,7 +104,7 @@ async def clone_voice(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to clone voice: {str(e)}",
-        )
+        ) from e
 
 
 @router.get("/elders/{elder_id}/voice", response_model=dict[str, Any])
@@ -141,7 +141,7 @@ async def get_elder_voice(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to fetch voice: {str(e)}",
-        )
+        ) from e
 
 
 @router.delete("/elders/{elder_id}/voice")
@@ -179,7 +179,7 @@ async def delete_elder_voice(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to delete voice: {str(e)}",
-        )
+        ) from e
 
 
 @router.post("/voice/text-to-speech")
@@ -233,7 +233,7 @@ async def text_to_speech(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to generate speech: {str(e)}",
-        )
+        ) from e
 
 
 @router.get("/voice/settings/{voice_id}")
@@ -246,7 +246,7 @@ async def get_voice_settings(voice_id: str) -> dict[str, Any]:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to get voice settings: {str(e)}",
-        )
+        ) from e
 
 
 @router.put("/voice/settings/{voice_id}")
@@ -263,7 +263,7 @@ async def update_voice_settings(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to update voice settings: {str(e)}",
-        )
+        ) from e
 
 
 @router.get("/voice/models")
@@ -276,4 +276,4 @@ async def get_available_models() -> list[dict[str, Any]]:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to fetch models: {str(e)}",
-        )
+        ) from e

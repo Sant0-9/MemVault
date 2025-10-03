@@ -222,13 +222,14 @@ async def get_next_question(
     )
 
     from sqlalchemy import update
+
     # Use explicit SQL update to ensure JSONB is updated properly
     await db.execute(
         update(InterviewSession)
         .where(InterviewSession.id == session_id)
         .values(
             conversation_history={"turns": conversation_history},
-            total_questions=session.total_questions + 1
+            total_questions=session.total_questions + 1,
         )
     )
 
@@ -269,13 +270,14 @@ async def submit_interview_response(
     )
 
     from sqlalchemy import update
+
     # Use explicit SQL update to ensure JSONB is updated properly
     await db.execute(
         update(InterviewSession)
         .where(InterviewSession.id == session_id)
         .values(
             conversation_history={"turns": conversation_history},
-            total_responses=session.total_responses + 1
+            total_responses=session.total_responses + 1,
         )
     )
 

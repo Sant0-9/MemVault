@@ -50,7 +50,9 @@ async def export_memories_json(
         "elder": {
             "id": elder.id,
             "name": elder.name,
-            "date_of_birth": elder.date_of_birth.isoformat() if elder.date_of_birth else None,
+            "date_of_birth": (
+                elder.date_of_birth.isoformat() if elder.date_of_birth else None
+            ),
             "hometown": elder.hometown,
             "bio": elder.bio,
         },
@@ -59,13 +61,17 @@ async def export_memories_json(
             {
                 "id": memory.id,
                 "title": memory.title,
-                "transcription": memory.transcription if include_transcriptions else None,
+                "transcription": (
+                    memory.transcription if include_transcriptions else None
+                ),
                 "summary": memory.summary,
                 "category": memory.category,
                 "era": memory.era,
                 "decade": memory.decade,
                 "location": memory.location,
-                "date_of_event": memory.date_of_event.isoformat() if memory.date_of_event else None,
+                "date_of_event": (
+                    memory.date_of_event.isoformat() if memory.date_of_event else None
+                ),
                 "people_mentioned": memory.people_mentioned,
                 "tags": memory.tags,
                 "emotional_tone": memory.emotional_tone,
@@ -121,34 +127,38 @@ async def export_memories_csv(
     csv_buffer = io.StringIO()
     writer = csv.writer(csv_buffer)
 
-    writer.writerow([
-        "ID",
-        "Title",
-        "Summary",
-        "Category",
-        "Era",
-        "Decade",
-        "Location",
-        "Date of Event",
-        "Emotional Tone",
-        "Duration (seconds)",
-        "Created At",
-    ])
+    writer.writerow(
+        [
+            "ID",
+            "Title",
+            "Summary",
+            "Category",
+            "Era",
+            "Decade",
+            "Location",
+            "Date of Event",
+            "Emotional Tone",
+            "Duration (seconds)",
+            "Created At",
+        ]
+    )
 
     for memory in memories:
-        writer.writerow([
-            memory.id,
-            memory.title or "",
-            memory.summary or "",
-            memory.category or "",
-            memory.era or "",
-            memory.decade or "",
-            memory.location or "",
-            memory.date_of_event.isoformat() if memory.date_of_event else "",
-            memory.emotional_tone or "",
-            memory.duration_seconds or 0,
-            memory.created_at.isoformat(),
-        ])
+        writer.writerow(
+            [
+                memory.id,
+                memory.title or "",
+                memory.summary or "",
+                memory.category or "",
+                memory.era or "",
+                memory.decade or "",
+                memory.location or "",
+                memory.date_of_event.isoformat() if memory.date_of_event else "",
+                memory.emotional_tone or "",
+                memory.duration_seconds or 0,
+                memory.created_at.isoformat(),
+            ]
+        )
 
     csv_bytes = csv_buffer.getvalue().encode("utf-8")
     csv_stream = io.BytesIO(csv_bytes)
@@ -166,7 +176,9 @@ async def export_memories_csv(
 async def export_memories_markdown(
     elder_id: int,
     category: Optional[str] = Query(None, description="Filter by category"),
-    include_transcriptions: bool = Query(True, description="Include full transcriptions"),
+    include_transcriptions: bool = Query(
+        True, description="Include full transcriptions"
+    ),
     db: AsyncSession = Depends(get_db),
 ) -> StreamingResponse:
     """Export memories as Markdown document."""
@@ -200,7 +212,7 @@ async def export_memories_markdown(
     if elder.hometown:
         md_content += f"**Hometown:** {elder.hometown}\n\n"
 
-    md_content += f"---\n\n"
+    md_content += "---\n\n"
     md_content += f"## Memories ({len(memories)})\n\n"
 
     current_decade = None
@@ -262,7 +274,7 @@ async def export_memories_markdown(
 @router.post("/elders/{elder_id}/export/request")
 async def request_export(
     elder_id: int,
-    format: str = Query(..., regex="^(json|csv|markdown|pdf)$"),
+    export_format: str = Query(..., regex="^(json|csv|markdown|pdf)$"),
     category: Optional[str] = Query(None),
     db: AsyncSession = Depends(get_db),
 ) -> dict[str, Any]:
@@ -284,11 +296,12 @@ async def request_export(
         "markdown": f"/api/v1/export/elders/{elder_id}/export/markdown",
     }
 
-    if format in endpoints:
+    if export_format in endpoints:
         return {
             "status": "ready",
-            "download_url": endpoints[format] + (f"?category={category}" if category else ""),
-            "format": format,
+            "download_url": endpoints[export_format]
+            + (f"?category={category}" if category else ""),
+            "format": export_format,
         }
 
     return {
@@ -341,7 +354,9 @@ async def export_audio_compilation(
                 "title": memory.title,
                 "url": memory.audio_url,
                 "duration_seconds": memory.duration_seconds,
-                "date_of_event": memory.date_of_event.isoformat() if memory.date_of_event else None,
+                "date_of_event": (
+                    memory.date_of_event.isoformat() if memory.date_of_event else None
+                ),
             }
             for memory in memories
         ],

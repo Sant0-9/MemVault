@@ -195,7 +195,6 @@ async def enrich_memory(memory_id: int, db: AsyncSession = Depends(get_db)) -> A
     if not memory.summary:
         memory.summary = enrichment_data.get("summary")
 
-    entities = enrichment_data.get("entities", {})
     if "people" in enrichment_data:
         memory.people_mentioned = enrichment_data.get("people")
     if "locations" in enrichment_data:
