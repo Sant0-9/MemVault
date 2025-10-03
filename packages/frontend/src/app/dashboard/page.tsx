@@ -32,10 +32,11 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!isAuthenticated()) {
-      router.push('/login')
-      return
-    }
+    // TEMPORARILY DISABLED AUTH FOR TESTING
+    // if (!isAuthenticated()) {
+    //   router.push('/login')
+    //   return
+    // }
 
     fetchElders()
   }, [isAuthenticated, router])
@@ -81,9 +82,10 @@ export default function DashboardPage() {
     router.push('/')
   }
 
-  if (!isAuthenticated()) {
-    return null
-  }
+  // TEMPORARILY DISABLED AUTH FOR TESTING
+  // if (!isAuthenticated()) {
+  //   return null
+  // }
 
   return (
     <div className="min-h-screen bg-background">

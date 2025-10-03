@@ -11,10 +11,9 @@ export default function Home() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated())
 
   useEffect(() => {
-    if (isAuthenticated) {
-      router.push('/dashboard')
-    }
-  }, [isAuthenticated, router])
+    // TEMPORARILY AUTO-REDIRECT TO DASHBOARD FOR TESTING
+    router.push('/dashboard')
+  }, [router])
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-8">
