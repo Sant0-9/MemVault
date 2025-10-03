@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useAuthStore } from '@/lib/store'
 import api from '@/lib/api'
+import DashboardLayout from '@/components/layouts/DashboardLayout'
 
 interface Elder {
   id: number
@@ -26,7 +27,7 @@ interface DashboardStats {
 
 export default function DashboardPage() {
   const router = useRouter()
-  const { user, isAuthenticated, logout } = useAuthStore()
+  const { isAuthenticated } = useAuthStore()
   const [elders, setElders] = useState<Elder[]>([])
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [loading, setLoading] = useState(true)
@@ -77,31 +78,14 @@ export default function DashboardPage() {
     }
   }
 
-  const handleLogout = () => {
-    logout()
-    router.push('/')
-  }
-
   // TEMPORARILY DISABLED AUTH FOR TESTING
   // if (!isAuthenticated()) {
   //   return null
   // }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold">MemoryVault</h1>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground">{user?.name}</span>
-            <Button variant="outline" onClick={handleLogout}>
-              Logout
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-4 py-8">
+    <DashboardLayout>
+      <div>
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
             <Card>
@@ -237,7 +221,7 @@ export default function DashboardPage() {
             ))}
           </div>
         )}
-      </main>
-    </div>
+      </div>
+    </DashboardLayout>
   )
 }

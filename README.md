@@ -2,7 +2,9 @@
 
 # MemoryVault
 
-### Preserve Life Stories for Future Generations
+### AI-Powered Platform to Preserve Life Stories for Future Generations
+
+**A production-grade SaaS application to capture, preserve, and share precious family memories**
 
 <p align="center">
   <img src="https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js" alt="Next.js" />
@@ -66,17 +68,27 @@ MemoryVault solves this by creating an **empathetic AI interviewer** that helps 
 
 <div align="center">
 
-### Current
+### Core Features (Phase 1-2)
 
 | Feature | Description |
 |---------|-------------|
 | **AI Interviewer** | Empathetic AI that asks thoughtful questions and adapts to responses |
-| **Voice Recording** | High-quality audio capture with automatic transcription |
+| **Voice Recording** | High-quality audio capture with automatic transcription using Whisper |
 | **Memory Enrichment** | AI-powered tagging, categorization, and historical context |
 | **IPFS Storage** | Permanent, decentralized storage - memories can never be deleted |
 | **Family Dashboard** | Beautiful interface to explore and share memories |
 
-### Coming Soon
+### Advanced Features (Phase 3)
+
+| Feature | Description |
+|---------|-------------|
+| **Voice Cloning** | Clone elder voices using ElevenLabs for AI-generated memories |
+| **Interactive Timeline** | Visualize memories across decades, eras, and categories |
+| **Advanced Search** | Full-text search with filters (category, era, emotion, location) |
+| **Analytics Dashboard** | Comprehensive insights: content distribution, emotional analysis, quality metrics |
+| **Multi-format Export** | Export as JSON, CSV, Markdown, or download all audio files |
+
+### Coming Soon (Phase 4)
 
 ```
 ┌─────────────────────────────────────────────────────┐

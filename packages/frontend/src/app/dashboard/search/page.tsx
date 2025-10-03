@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import api from '@/lib/api'
 import { Search, Filter, Calendar, MapPin, Heart, X } from 'lucide-react'
+import DashboardLayout from '@/components/layouts/DashboardLayout'
 
 interface SearchResult {
   id: number
@@ -137,22 +138,13 @@ export default function SearchPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
-        <div className="container mx-auto px-4 py-4">
-          <Link href="/dashboard" className="text-sm text-muted-foreground hover:text-foreground">
-            ← Back to Dashboard
-          </Link>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-4 py-8 max-w-7xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Search Memories</h1>
-          <p className="text-muted-foreground">
-            Search across all memories with advanced filters
-          </p>
-        </div>
+    <DashboardLayout>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2">Search Memories</h1>
+        <p className="text-muted-foreground">
+          Search across all memories with advanced filters
+        </p>
+      </div>
 
         <form onSubmit={handleSearch} className="mb-6">
           <div className="flex gap-2">
@@ -355,7 +347,6 @@ export default function SearchPage() {
             )}
           </div>
         )}
-      </main>
-    </div>
+    </DashboardLayout>
   )
 }
