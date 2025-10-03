@@ -58,24 +58,34 @@ Based on the conversation so far, ask your next thoughtful question."""
         topic: Optional[str] = None,
     ) -> str:
         """Generate the next interview question based on conversation history."""
-        system_prompt = await self.create_interview_prompt(
-            elder_name, conversation_history
-        )
+        system_content = f"""You are an empathetic AI interviewer helping to preserve {elder_name}'s life stories and memories.
 
-        messages = [{"role": "system", "content": system_prompt}]
+Your role is to:
+- Ask thoughtful, open-ended questions about their life experiences
+- Listen actively and show genuine interest
+- Follow up on interesting details they mention
+- Help them remember and articulate precious memories
+- Be patient, warm, and respectful
+- Adapt your questions based on their responses
+- Guide them through different life periods (childhood, youth, career, family, etc.)
+
+Keep your questions conversational and natural. Make them feel comfortable sharing their stories.
+IMPORTANT: Pay close attention to their previous answers and ask relevant follow-up questions based on what they've shared."""
+
+        messages = [{"role": "system", "content": system_content}]
+
+        # Add the actual conversation history as proper message turns
+        for turn in conversation_history:
+            role = turn.get("role", "assistant")
+            content = turn.get("content", "")
+            if role in ["assistant", "user"]:
+                messages.append({"role": role, "content": content})
 
         if topic:
             messages.append(
                 {
                     "role": "user",
                     "content": f"Focus the next question on: {topic}",
-                }
-            )
-        else:
-            messages.append(
-                {
-                    "role": "user",
-                    "content": "What should I ask next?",
                 }
             )
 

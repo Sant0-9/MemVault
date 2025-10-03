@@ -221,8 +221,16 @@ async def get_next_question(
         }
     )
 
-    session.conversation_history = {"turns": conversation_history}  # type: ignore[assignment]
-    session.total_questions += 1
+    from sqlalchemy import update
+    # Use explicit SQL update to ensure JSONB is updated properly
+    await db.execute(
+        update(InterviewSession)
+        .where(InterviewSession.id == session_id)
+        .values(
+            conversation_history={"turns": conversation_history},
+            total_questions=session.total_questions + 1
+        )
+    )
 
     await db.commit()
     await db.refresh(session)
@@ -260,8 +268,16 @@ async def submit_interview_response(
         }
     )
 
-    session.conversation_history = {"turns": conversation_history}  # type: ignore[assignment]
-    session.total_responses += 1
+    from sqlalchemy import update
+    # Use explicit SQL update to ensure JSONB is updated properly
+    await db.execute(
+        update(InterviewSession)
+        .where(InterviewSession.id == session_id)
+        .values(
+            conversation_history={"turns": conversation_history},
+            total_responses=session.total_responses + 1
+        )
+    )
 
     await db.commit()
     await db.refresh(session)

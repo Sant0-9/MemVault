@@ -15,6 +15,7 @@ from app.schemas.memory_schema import (
     MemoryResponse,
     MemoryUpdate,
 )
+from app.services.openai_service import openai_service
 
 router = APIRouter()
 
@@ -160,3 +161,46 @@ async def delete_memory(memory_id: int, db: AsyncSession = Depends(get_db)) -> N
 
     memory.deleted_at = datetime.now(timezone.utc)
     await db.commit()
+
+
+@router.post("/{memory_id}/enrich", response_model=MemoryResponse)
+async def enrich_memory(memory_id: int, db: AsyncSession = Depends(get_db)) -> Any:
+    """Enrich memory with AI-generated metadata."""
+    result = await db.execute(
+        select(Memory).where(Memory.id == memory_id, Memory.deleted_at.is_(None))
+    )
+    memory = result.scalar_one_or_none()
+
+    if not memory:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Memory not found",
+        )
+
+    if not memory.transcription:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Memory must have transcription to be enriched",
+        )
+
+    enrichment_data = await openai_service.enrich_memory(
+        memory.transcription, memory.tags or []
+    )
+
+    memory.category = enrichment_data.get("category")
+    memory.tags = enrichment_data.get("tags")
+    memory.emotional_tone = enrichment_data.get("emotional_tone")
+    memory.era = enrichment_data.get("time_period")
+
+    if not memory.summary:
+        memory.summary = enrichment_data.get("summary")
+
+    entities = enrichment_data.get("entities", {})
+    if "people" in enrichment_data:
+        memory.people_mentioned = enrichment_data.get("people")
+    if "locations" in enrichment_data:
+        memory.location = ", ".join(enrichment_data.get("locations", []))[:200]
+
+    await db.commit()
+    await db.refresh(memory)
+    return memory

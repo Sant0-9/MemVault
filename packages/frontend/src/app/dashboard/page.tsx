@@ -17,10 +17,18 @@ interface Elder {
   bio: string | null
 }
 
+interface DashboardStats {
+  total_memories: number
+  total_duration_hours: number
+  total_elders: number
+  memories_this_month: number
+}
+
 export default function DashboardPage() {
   const router = useRouter()
   const { user, isAuthenticated, logout } = useAuthStore()
   const [elders, setElders] = useState<Elder[]>([])
+  const [stats, setStats] = useState<DashboardStats | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -34,10 +42,35 @@ export default function DashboardPage() {
 
   const fetchElders = async () => {
     try {
-      const response = await api.get('/elders/')
-      setElders(response.data.items)
+      const [eldersResponse, memoriesResponse] = await Promise.all([
+        api.get('/elders/'),
+        api.get('/memories/?size=100'),
+      ])
+
+      setElders(eldersResponse.data.items)
+
+      const memories = memoriesResponse.data.items
+      const totalDuration = memories.reduce(
+        (sum: number, m: any) => sum + (m.duration_seconds || 0),
+        0
+      )
+      const now = new Date()
+      const thisMonth = memories.filter((m: any) => {
+        const created = new Date(m.created_at)
+        return (
+          created.getMonth() === now.getMonth() &&
+          created.getFullYear() === now.getFullYear()
+        )
+      }).length
+
+      setStats({
+        total_memories: memoriesResponse.data.total,
+        total_duration_hours: Math.round(totalDuration / 3600),
+        total_elders: eldersResponse.data.total,
+        memories_this_month: thisMonth,
+      })
     } catch (error) {
-      console.error('Failed to fetch elders:', error)
+      console.error('Failed to fetch dashboard data:', error)
     } finally {
       setLoading(false)
     }
@@ -67,9 +100,70 @@ export default function DashboardPage() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
+        {stats && (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <Card>
+              <CardHeader className="pb-3">
+                <CardDescription>Total Memories</CardDescription>
+                <CardTitle className="text-3xl">{stats.total_memories}</CardTitle>
+              </CardHeader>
+            </Card>
+            <Card>
+              <CardHeader className="pb-3">
+                <CardDescription>Hours Recorded</CardDescription>
+                <CardTitle className="text-3xl">{stats.total_duration_hours}h</CardTitle>
+              </CardHeader>
+            </Card>
+            <Card>
+              <CardHeader className="pb-3">
+                <CardDescription>Family Members</CardDescription>
+                <CardTitle className="text-3xl">{stats.total_elders}</CardTitle>
+              </CardHeader>
+            </Card>
+            <Card>
+              <CardHeader className="pb-3">
+                <CardDescription>This Month</CardDescription>
+                <CardTitle className="text-3xl">+{stats.memories_this_month}</CardTitle>
+              </CardHeader>
+            </Card>
+          </div>
+        )}
+
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-bold">Quick Actions</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Button asChild variant="outline" size="lg" className="h-auto py-4">
+              <Link href="/dashboard/elders/new">
+                <div className="text-center">
+                  <div className="text-2xl mb-2">👴</div>
+                  <div className="font-semibold">Add Elder</div>
+                </div>
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="h-auto py-4">
+              <Link href="/dashboard/memories">
+                <div className="text-center">
+                  <div className="text-2xl mb-2">🎵</div>
+                  <div className="font-semibold">Browse Memories</div>
+                </div>
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="h-auto py-4">
+              <Link href={elders[0] ? `/dashboard/elders/${elders[0].id}/interview` : '#'}>
+                <div className="text-center">
+                  <div className="text-2xl mb-2">🎤</div>
+                  <div className="font-semibold">Start Interview</div>
+                </div>
+              </Link>
+            </Button>
+          </div>
+        </div>
+
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-3xl font-bold">Family Members</h2>
+            <h2 className="text-2xl font-bold">Family Members</h2>
             <p className="text-muted-foreground mt-1">
               Manage and preserve memories of your loved ones
             </p>

@@ -29,6 +29,7 @@ export default function InterviewPage() {
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [initializing, setInitializing] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -64,8 +65,10 @@ export default function InterviewPage() {
           content: questionResponse.data.question,
         },
       ])
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to initialize interview:', error)
+      const errorMessage = error?.response?.data?.detail || error?.message || 'Failed to initialize interview'
+      setError(errorMessage)
     } finally {
       setInitializing(false)
     }
@@ -98,8 +101,16 @@ export default function InterviewPage() {
           content: questionResponse.data.question,
         },
       ])
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to process message:', error)
+      const errorMessage = error?.response?.data?.detail || error?.message || 'Failed to send message'
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: 'assistant',
+          content: `Error: ${errorMessage}`,
+        },
+      ])
     } finally {
       setLoading(false)
     }
@@ -109,6 +120,17 @@ export default function InterviewPage() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <p className="text-muted-foreground">Initializing interview...</p>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">Error: {error}</p>
+          <Button onClick={() => router.push('/dashboard')}>Back to Dashboard</Button>
+        </div>
       </div>
     )
   }
