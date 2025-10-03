@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -61,15 +61,7 @@ export default function SearchPage() {
     location: searchParams.get('location') || '',
   })
 
-  useEffect(() => {
-    const q = searchParams.get('q')
-    if (q) {
-      setSearchQuery(q)
-      performSearch(q)
-    }
-  }, [searchParams])
-
-  const performSearch = async (query: string) => {
+  const performSearch = useCallback(async (query: string) => {
     if (!query.trim()) return
 
     setLoading(true)
@@ -89,7 +81,15 @@ export default function SearchPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [filters])
+
+  useEffect(() => {
+    const q = searchParams.get('q')
+    if (q) {
+      setSearchQuery(q)
+      performSearch(q)
+    }
+  }, [searchParams, performSearch])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()

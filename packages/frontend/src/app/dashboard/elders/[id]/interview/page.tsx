@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -32,19 +32,11 @@ export default function InterviewPage() {
   const [error, setError] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    initializeInterview()
-  }, [elderId])
-
-  useEffect(() => {
-    scrollToBottom()
-  }, [messages])
-
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
+  }, [])
 
-  const initializeInterview = async () => {
+  const initializeInterview = useCallback(async () => {
     try {
       const elderResponse = await api.get(`/elders/${elderId}`)
       setElder(elderResponse.data)
@@ -72,7 +64,15 @@ export default function InterviewPage() {
     } finally {
       setInitializing(false)
     }
-  }
+  }, [elderId])
+
+  useEffect(() => {
+    initializeInterview()
+  }, [initializeInterview])
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages, scrollToBottom])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

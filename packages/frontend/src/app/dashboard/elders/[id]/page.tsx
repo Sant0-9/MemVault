@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -39,11 +39,7 @@ export default function ElderDetailPage() {
   const [voiceProfile, setVoiceProfile] = useState<VoiceProfileData | null>(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    fetchData()
-  }, [elderId])
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const [elderResponse, memoriesResponse, voiceResponse] = await Promise.all([
         api.get(`/elders/${elderId}`),
@@ -59,7 +55,11 @@ export default function ElderDetailPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [elderId])
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
 
   if (loading) {
     return (

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import api from '@/lib/api'
@@ -52,12 +52,7 @@ export default function Timeline({ elderId }: TimelineProps) {
   const [loading, setLoading] = useState(true)
   const [expandedPeriods, setExpandedPeriods] = useState<Set<string>>(new Set())
 
-  useEffect(() => {
-    fetchTimeline()
-    fetchStats()
-  }, [elderId, groupBy])
-
-  const fetchTimeline = async () => {
+  const fetchTimeline = useCallback(async () => {
     try {
       const response = await api.get(`/timeline/elders/${elderId}/timeline`, {
         params: { group_by: groupBy },
@@ -68,16 +63,21 @@ export default function Timeline({ elderId }: TimelineProps) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [elderId, groupBy])
 
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
       const response = await api.get(`/timeline/elders/${elderId}/timeline/stats`)
       setStats(response.data)
     } catch (error) {
       console.error('Failed to fetch timeline stats:', error)
     }
-  }
+  }, [elderId])
+
+  useEffect(() => {
+    fetchTimeline()
+    fetchStats()
+  }, [fetchTimeline, fetchStats])
 
   const togglePeriod = (period: string) => {
     const newExpanded = new Set(expandedPeriods)

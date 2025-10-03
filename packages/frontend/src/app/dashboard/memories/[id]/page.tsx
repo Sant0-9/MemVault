@@ -34,11 +34,7 @@ export default function MemoryDetailPage() {
   const [playing, setPlaying] = useState(false)
   const audioRef = useRef<HTMLAudioElement>(null)
 
-  useEffect(() => {
-    loadMemory()
-  }, [memoryId])
-
-  const loadMemory = async () => {
+  const loadMemory = useCallback(async () => {
     try {
       const response = await api.get(`/memories/${memoryId}`)
       setMemory(response.data)
@@ -47,7 +43,11 @@ export default function MemoryDetailPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [memoryId])
+
+  useEffect(() => {
+    loadMemory()
+  }, [loadMemory])
 
   const togglePlayPause = () => {
     if (audioRef.current) {

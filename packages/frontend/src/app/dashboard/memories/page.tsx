@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -33,11 +33,7 @@ export default function MemoriesPage() {
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
 
-  useEffect(() => {
-    loadMemories()
-  }, [page, selectedCategory])
-
-  const loadMemories = async () => {
+  const loadMemories = useCallback(async () => {
     try {
       setLoading(true)
       const params: any = { page, size: 12 }
@@ -52,7 +48,11 @@ export default function MemoriesPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [page, selectedCategory, searchQuery])
+
+  useEffect(() => {
+    loadMemories()
+  }, [loadMemories])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
