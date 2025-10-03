@@ -135,7 +135,7 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl font-bold">Quick Actions</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <Button asChild variant="outline" size="lg" className="h-auto py-4">
               <Link href="/dashboard/elders/new">
                 <div className="text-center">
@@ -149,6 +149,14 @@ export default function DashboardPage() {
                 <div className="text-center">
                   <div className="text-2xl mb-2">🎵</div>
                   <div className="font-semibold">Browse Memories</div>
+                </div>
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="h-auto py-4">
+              <Link href="/dashboard/search">
+                <div className="text-center">
+                  <div className="text-2xl mb-2">🔍</div>
+                  <div className="font-semibold">Search Memories</div>
                 </div>
               </Link>
             </Button>

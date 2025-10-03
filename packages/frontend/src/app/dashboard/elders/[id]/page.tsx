@@ -6,6 +6,8 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import api from '@/lib/api'
+import VoiceProfile from '@/components/features/VoiceProfile'
+import ExportMemories from '@/components/features/ExportMemories'
 
 interface Elder {
   id: number
@@ -13,6 +15,13 @@ interface Elder {
   relationship: string
   birth_date: string | null
   bio: string | null
+}
+
+interface VoiceProfileData {
+  has_voice: boolean
+  voice_id?: string
+  voice_name?: string
+  sample_audios?: any
 }
 
 interface Memory {
@@ -27,6 +36,7 @@ export default function ElderDetailPage() {
   const elderId = params.id as string
   const [elder, setElder] = useState<Elder | null>(null)
   const [memories, setMemories] = useState<Memory[]>([])
+  const [voiceProfile, setVoiceProfile] = useState<VoiceProfileData | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -35,13 +45,15 @@ export default function ElderDetailPage() {
 
   const fetchData = async () => {
     try {
-      const [elderResponse, memoriesResponse] = await Promise.all([
+      const [elderResponse, memoriesResponse, voiceResponse] = await Promise.all([
         api.get(`/elders/${elderId}`),
         api.get(`/memories/?elder_id=${elderId}`),
+        api.get(`/voice/elders/${elderId}/voice`).catch(() => ({ data: { has_voice: false } })),
       ])
 
       setElder(elderResponse.data)
       setMemories(memoriesResponse.data.items)
+      setVoiceProfile(voiceResponse.data)
     } catch (error) {
       console.error('Failed to fetch data:', error)
     } finally {
@@ -86,11 +98,23 @@ export default function ElderDetailPage() {
                     {elder.relationship}
                   </CardDescription>
                 </div>
-                <Button asChild>
-                  <Link href={`/dashboard/elders/${elderId}/interview`}>
-                    Start Interview
-                  </Link>
-                </Button>
+                <div className="flex gap-2">
+                  <Button asChild variant="outline" size="sm">
+                    <Link href={`/dashboard/elders/${elderId}/timeline`}>
+                      Timeline
+                    </Link>
+                  </Button>
+                  <Button asChild variant="outline" size="sm">
+                    <Link href={`/dashboard/elders/${elderId}/analytics`}>
+                      Analytics
+                    </Link>
+                  </Button>
+                  <Button asChild>
+                    <Link href={`/dashboard/elders/${elderId}/interview`}>
+                      Start Interview
+                    </Link>
+                  </Button>
+                </div>
               </div>
             </CardHeader>
             {elder.bio && (
@@ -99,6 +123,15 @@ export default function ElderDetailPage() {
               </CardContent>
             )}
           </Card>
+
+          <VoiceProfile
+            elderId={parseInt(elderId)}
+            elderName={elder.name}
+            voiceProfile={voiceProfile || undefined}
+            onVoiceCreated={fetchData}
+          />
+
+          <ExportMemories elderId={parseInt(elderId)} elderName={elder.name} />
 
           <Card>
             <CardHeader>
