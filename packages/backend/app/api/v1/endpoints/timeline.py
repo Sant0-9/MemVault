@@ -1,6 +1,6 @@
 """Timeline visualization endpoints."""
 
-from typing import Any, Optional
+from typing import Any, Optional, cast
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import and_, func, select
@@ -47,7 +47,7 @@ async def get_elder_timeline(
     )
 
     result = await db.execute(query)
-    memories = result.scalars().all()
+    memories = cast(list[Memory], list(result.scalars().all()))
 
     if group_by == "decade":
         timeline_data = _group_by_decade(memories)
@@ -108,7 +108,7 @@ def _group_by_decade(memories: list[Memory]) -> list[dict[str, Any]]:
             }
             for decade, memories_list in decades.items()
         ],
-        key=lambda x: x["period"] if x["period"] != "Unknown" else "9999",
+        key=lambda x: str(x["period"]) if x["period"] != "Unknown" else "9999",
     )
 
     return sorted_decades
@@ -150,7 +150,7 @@ def _group_by_year(memories: list[Memory]) -> list[dict[str, Any]]:
             }
             for year, memories_list in years.items()
         ],
-        key=lambda x: int(x["period"]) if x["period"].isdigit() else 9999,
+        key=lambda x: int(str(x["period"])) if str(x["period"]).isdigit() else 9999,
     )
 
     return sorted_years
@@ -200,7 +200,9 @@ def _group_by_era(memories: list[Memory]) -> list[dict[str, Any]]:
             for era, memories_list in eras.items()
         ],
         key=lambda x: (
-            era_order.index(x["period"]) if x["period"] in era_order else len(era_order)
+            era_order.index(str(x["period"]))
+            if str(x["period"]) in era_order
+            else len(era_order)
         ),
     )
 
@@ -239,7 +241,7 @@ def _group_by_category(memories: list[Memory]) -> list[dict[str, Any]]:
             }
             for category, memories_list in categories.items()
         ],
-        key=lambda x: x["count"],
+        key=lambda x: int(x["count"]) if isinstance(x["count"], int) else 0,
         reverse=True,
     )
 
@@ -266,7 +268,7 @@ async def get_timeline_stats(
     )
 
     result = await db.execute(query)
-    memories = result.scalars().all()
+    memories = cast(list[Memory], list(result.scalars().all()))
 
     earliest_memory = None
     latest_memory = None
@@ -278,9 +280,9 @@ async def get_timeline_stats(
             if latest_memory is None or memory.date_of_event > latest_memory:
                 latest_memory = memory.date_of_event
 
-    decades_covered = set()
-    categories = {}
-    eras = {}
+    decades_covered: set[str] = set()
+    categories: dict[str, int] = {}
+    eras: dict[str, int] = {}
 
     for memory in memories:
         if memory.decade:

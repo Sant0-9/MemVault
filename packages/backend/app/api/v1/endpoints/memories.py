@@ -183,8 +183,15 @@ async def enrich_memory(memory_id: int, db: AsyncSession = Depends(get_db)) -> A
             detail="Memory must have transcription to be enriched",
         )
 
+    existing_tags: list[str] | None = None
+    if memory.tags:
+        if isinstance(memory.tags, dict):
+            existing_tags = list(memory.tags.keys()) if memory.tags else None
+        elif isinstance(memory.tags, list):
+            existing_tags = memory.tags
+
     enrichment_data = await openai_service.enrich_memory(
-        memory.transcription, memory.tags or []
+        memory.transcription, existing_tags
     )
 
     memory.category = enrichment_data.get("category")

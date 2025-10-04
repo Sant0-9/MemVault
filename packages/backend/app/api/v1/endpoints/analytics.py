@@ -1,7 +1,7 @@
 """Analytics and insights endpoints."""
 
 from datetime import datetime, timedelta
-from typing import Any, Optional
+from typing import Any, Optional, cast
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy import and_, func, select
@@ -36,7 +36,7 @@ async def get_elder_analytics(
     )
 
     result = await db.execute(query)
-    memories = result.scalars().all()
+    memories = cast(list[Memory], list(result.scalars().all()))
 
     return {
         "elder_id": elder_id,
@@ -69,9 +69,9 @@ async def _get_overview_stats(memories: list[Memory]) -> dict[str, Any]:
 
 async def _get_timeline_analysis(memories: list[Memory]) -> dict[str, Any]:
     """Analyze timeline coverage."""
-    decades = {}
-    eras = {}
-    years = {}
+    decades: dict[str, int] = {}
+    eras: dict[str, int] = {}
+    years: dict[int, int] = {}
 
     for memory in memories:
         if memory.decade:
@@ -103,10 +103,10 @@ async def _get_timeline_analysis(memories: list[Memory]) -> dict[str, Any]:
 
 async def _get_content_analysis(memories: list[Memory]) -> dict[str, Any]:
     """Analyze content distribution."""
-    categories = {}
-    locations = set()
-    people = set()
-    tags_count = {}
+    categories: dict[str, int] = {}
+    locations: set[str] = set()
+    people: set[str] = set()
+    tags_count: dict[str, int] = {}
 
     for memory in memories:
         if memory.category:
@@ -147,8 +147,8 @@ async def _get_content_analysis(memories: list[Memory]) -> dict[str, Any]:
 
 async def _get_emotional_insights(memories: list[Memory]) -> dict[str, Any]:
     """Analyze emotional content."""
-    emotions = {}
-    sentiments = {}
+    emotions: dict[str, int] = {}
+    sentiments: dict[str, int] = {}
 
     for memory in memories:
         if memory.emotional_tone:
@@ -276,9 +276,9 @@ async def get_recent_activity(
     )
 
     result = await db.execute(query)
-    recent_memories = result.scalars().all()
+    recent_memories = cast(list[Memory], list(result.scalars().all()))
 
-    memories_by_day = {}
+    memories_by_day: dict[str, list[dict[str, Any]]] = {}
     for memory in recent_memories:
         day_key = memory.created_at.date().isoformat()
         if day_key not in memories_by_day:
@@ -319,7 +319,7 @@ async def get_global_analytics(
 
     total_duration = sum(m.duration_seconds or 0 for m in memories)
 
-    categories = {}
+    categories: dict[str, int] = {}
     for memory in memories:
         if memory.category:
             categories[memory.category] = categories.get(memory.category, 0) + 1

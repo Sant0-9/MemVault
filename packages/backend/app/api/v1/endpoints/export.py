@@ -3,7 +3,7 @@
 import io
 import json
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any, Optional, cast
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import StreamingResponse
@@ -43,7 +43,7 @@ async def export_memories_json(
         query = query.where(Memory.category == category)
 
     result = await db.execute(query.order_by(Memory.created_at.desc()))
-    memories = result.scalars().all()
+    memories = cast(list[Memory], list(result.scalars().all()))
 
     export_data = {
         "export_date": datetime.now().isoformat(),
@@ -120,7 +120,7 @@ async def export_memories_csv(
         query = query.where(Memory.category == category)
 
     result = await db.execute(query.order_by(Memory.created_at.desc()))
-    memories = result.scalars().all()
+    memories = cast(list[Memory], list(result.scalars().all()))
 
     import csv
 
@@ -199,7 +199,7 @@ async def export_memories_markdown(
         query = query.where(Memory.category == category)
 
     result = await db.execute(query.order_by(Memory.date_of_event.asc()))
-    memories = result.scalars().all()
+    memories = cast(list[Memory], list(result.scalars().all()))
 
     md_content = f"# Life Memories: {elder.name}\n\n"
 
@@ -306,8 +306,8 @@ async def request_export(
 
     return {
         "status": "processing",
-        "message": f"{format.upper()} export is being prepared. This may take a few minutes.",
-        "format": format,
+        "message": f"{export_format.upper()} export is being prepared. This may take a few minutes.",
+        "format": export_format,
     }
 
 
@@ -341,7 +341,7 @@ async def export_audio_compilation(
         query = query.where(Memory.category == category)
 
     result = await db.execute(query.order_by(Memory.date_of_event.asc()))
-    memories = result.scalars().all()
+    memories = cast(list[Memory], list(result.scalars().all()))
 
     return {
         "elder_id": elder_id,

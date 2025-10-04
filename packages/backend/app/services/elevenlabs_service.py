@@ -1,7 +1,7 @@
 """ElevenLabs voice cloning and text-to-speech service."""
 
 import io
-from typing import Any, BinaryIO, Optional
+from typing import Any, BinaryIO, Optional, Sequence, Union
 
 import httpx
 
@@ -24,7 +24,7 @@ class ElevenLabsService:
     async def create_voice_clone(
         self,
         name: str,
-        audio_files: list[tuple[str, BinaryIO]],
+        audio_files: Sequence[tuple[str, Union[BinaryIO, io.BytesIO]]],
         description: Optional[str] = None,
         labels: Optional[dict[str, str]] = None,
     ) -> dict[str, Any]:
@@ -47,20 +47,21 @@ class ElevenLabsService:
         for filename, file_obj in audio_files:
             files_data.append(("files", (filename, file_obj, "audio/mpeg")))
 
-        data = {"name": name}
+        data: dict[str, Any] = {"name": name}
         if description:
             data["description"] = description
         if labels:
             data["labels"] = labels
 
-        headers = {"xi-api-key": self.api_key}
+        headers: dict[str, str] = {"xi-api-key": self.api_key}
 
         async with httpx.AsyncClient(timeout=60.0) as client:
             response = await client.post(
                 url, headers=headers, data=data, files=files_data
             )
             response.raise_for_status()
-            return response.json()
+            result: dict[str, Any] = response.json()
+            return result
 
     async def get_voice(self, voice_id: str) -> dict[str, Any]:
         """Get voice details by ID."""
@@ -69,7 +70,8 @@ class ElevenLabsService:
         async with httpx.AsyncClient() as client:
             response = await client.get(url, headers=self.headers)
             response.raise_for_status()
-            return response.json()
+            result: dict[str, Any] = response.json()
+            return result
 
     async def list_voices(self) -> list[dict[str, Any]]:
         """List all available voices."""
@@ -78,8 +80,9 @@ class ElevenLabsService:
         async with httpx.AsyncClient() as client:
             response = await client.get(url, headers=self.headers)
             response.raise_for_status()
-            data = response.json()
-            return data.get("voices", [])
+            data: dict[str, Any] = response.json()
+            voices: list[dict[str, Any]] = data.get("voices", [])
+            return voices
 
     async def delete_voice(self, voice_id: str) -> dict[str, Any]:
         """Delete a voice by ID."""
@@ -88,7 +91,8 @@ class ElevenLabsService:
         async with httpx.AsyncClient() as client:
             response = await client.delete(url, headers=self.headers)
             response.raise_for_status()
-            return response.json()
+            result: dict[str, Any] = response.json()
+            return result
 
     async def text_to_speech(
         self,
@@ -194,7 +198,8 @@ class ElevenLabsService:
         async with httpx.AsyncClient() as client:
             response = await client.get(url, headers=self.headers)
             response.raise_for_status()
-            return response.json()
+            result: dict[str, Any] = response.json()
+            return result
 
     async def update_voice_settings(
         self, voice_id: str, settings: dict[str, float]
@@ -205,7 +210,8 @@ class ElevenLabsService:
         async with httpx.AsyncClient() as client:
             response = await client.post(url, headers=self.headers, json=settings)
             response.raise_for_status()
-            return response.json()
+            result: dict[str, Any] = response.json()
+            return result
 
     async def get_available_models(self) -> list[dict[str, Any]]:
         """Get list of available ElevenLabs models."""
@@ -214,10 +220,11 @@ class ElevenLabsService:
         async with httpx.AsyncClient() as client:
             response = await client.get(url, headers=self.headers)
             response.raise_for_status()
-            return response.json()
+            result: list[dict[str, Any]] = response.json()
+            return result
 
     async def check_voice_quality(
-        self, audio_files: list[tuple[str, BinaryIO]]
+        self, audio_files: Sequence[tuple[str, Union[BinaryIO, io.BytesIO]]]
     ) -> dict[str, Any]:
         """
         Check quality of audio samples before voice cloning.
