@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -45,7 +45,7 @@ interface SearchResponse {
   filters_applied: Record<string, any>
 }
 
-export default function SearchPage() {
+function SearchContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '')
@@ -348,5 +348,25 @@ export default function SearchPage() {
           </div>
         )}
     </DashboardLayout>
+  )
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={
+      <DashboardLayout>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-2">Search Memories</h1>
+          <p className="text-muted-foreground">
+            Search across all memories with advanced filters
+          </p>
+        </div>
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </DashboardLayout>
+    }>
+      <SearchContent />
+    </Suspense>
   )
 }
